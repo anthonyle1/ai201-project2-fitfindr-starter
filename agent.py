@@ -19,7 +19,7 @@ Usage (once implemented):
 """
 
 from tools import search_listings, suggest_outfit, create_fit_card
-
+import re
 
 # ── session state ─────────────────────────────────────────────────────────────
 
@@ -46,6 +46,53 @@ def _new_session(query: str, wardrobe: dict) -> dict:
 
 
 # ── planning loop ─────────────────────────────────────────────────────────────
+
+def parse_query(query):
+    parsed = {
+        "description": "",
+        "size": None,
+        "max_price": None
+    }
+
+    # Extract size
+    size_pattern = (
+        r"\b("
+        r"XS|S|M|L|XL|XXL|XXXL|"
+        r"S/M|M/L|L/XL|XL/XXL|"
+        r"W\d+\s*L\d+|"
+        r"W\d+|"
+        r"US\s*\d+(?:\.\d+)?|"
+        r"One\s+Size"
+        r")\b"
+    )
+
+    size_match = re.search(size_pattern, query, re.IGNORECASE)
+    if size_match:
+        parsed["size"] = size_match.group(1)
+
+    # Extract max price
+    price_pattern = (
+        r"(?:under|max(?:imum)?(?:\s+price)?|<=?)"
+        r"\s*\$?"
+        r"(\d+(?:\.\d{1,2})?)"
+    )
+
+    price_match = re.search(price_pattern, query, re.IGNORECASE)
+    if price_match:
+        parsed["max_price"] = float(price_match.group(1))
+
+    # Remove extracted fields from description
+    description = query
+
+    if size_match:
+        description = re.sub(size_pattern, "", description, flags=re.IGNORECASE)
+
+    if price_match:
+        description = re.sub(price_pattern, "", description, flags=re.IGNORECASE)
+
+    parsed["description"] = " ".join(description.split())
+
+    return parsed
 
 def run_agent(query: str, wardrobe: dict) -> dict:
     """
@@ -92,8 +139,37 @@ def run_agent(query: str, wardrobe: dict) -> dict:
     Before writing code, complete the Planning Loop and State Management sections
     of planning.md — your implementation should match what you described there.
     """
-    # TODO: implement the planning loop
+
+        # Step 1: Initialize the session with _new_session().
     session = _new_session(query, wardrobe)
+
+        # Step 2: Parse the user's query to extract a description, size, and
+        #         max_price. You can use regex, string splitting, or ask the LLM
+        #         to parse it — document your choice in planning.md.
+        #         Store the result in session["parsed"].
+
+    session["parsed"] = parse_query(query)
+
+        # Step 3: Call search_listings() with the parsed parameters.
+        #         Store results in session["search_results"].
+        #         If no results: set session["error"] to a helpful message and
+        #         return the session early. Do NOT proceed to suggest_outfit
+        #         with empty input.
+
+    
+
+        # Step 4: Select the item to use (e.g., the top result).
+        #         Store it in session["selected_item"].
+
+        # Step 5: Call suggest_outfit() with the selected item and wardrobe.
+        #         Store the result in session["outfit_suggestion"].
+
+        # Step 6: Call create_fit_card() with the outfit suggestion and selected item.
+        #         Store the result in session["fit_card"].
+
+        # Step 7: Return the session.
+
+
     session["error"] = "Planning loop not yet implemented."
     return session
 
