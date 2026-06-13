@@ -230,4 +230,53 @@ def create_fit_card(outfit: str, new_item: dict) -> str:
     Before writing code, fill in the Tool 3 section of planning.md.
     """
     # Replace this with your implementation
-    return ""
+
+    if not outfit or not outfit.strip():
+        return ""
+
+    item_name = new_item.get("title", "Unknown Item")
+    category = new_item.get("category", "clothing item")
+    description = new_item.get("description", "")
+    style_tags = ", ".join(new_item.get("style_tags", []))
+    colors = ", ".join(new_item.get("colors", []))
+    brand = new_item.get("brand", "")
+    platform = new_item.get("platform", "Unknown Platform")
+    price = new_item.get("price", "Unknown Price")
+
+
+    prompt = f"""
+    Write a sharable 2-4 sentence social media caption usable for platforms like Instagram and Tiktok.
+    The caption should:
+    - Feel casual and authentic, like a real OOTD post, not a product description.
+    - Mention item name, price, and platform naturally (once each)
+    - Capture the outfit vibe in specific terms
+    - Be exactly 2-4 sentences
+
+    Item:
+    - Name: {item_name}
+    - Category: {category}
+    - Description: {description}
+    - Style tags: {style_tags}
+    - Colors: {colors}
+    - Brand: {brand}
+    - Platform: {platform}
+    - Price: {price}
+
+    Outfit Suggestion:
+    {outfit.strip()}
+    """
+
+    groq = _get_groq_client()
+
+    response = groq.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        temperature=1.0,  # higher temperature for more varied captions
+    )
+
+    return response.choices[0].message.content.strip()
