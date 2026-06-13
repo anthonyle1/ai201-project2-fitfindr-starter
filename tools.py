@@ -79,7 +79,7 @@ def search_listings(
             continue
         if size is not None and size.lower() not in listing["size"].lower():
             continue
-        
+
         # Each listing dict has the following fields:
         # id, title, description, category, style_tags (list), size,
         # condition, price (float), colors (list), brand, platform
@@ -101,7 +101,6 @@ def search_listings(
     scored_results.sort(key=lambda x: x[0], reverse=True)
 
     return [listing for score, listing in scored_results]
-
 
 # ── Tool 2: suggest_outfit ────────────────────────────────────────────────────
 
@@ -132,9 +131,74 @@ def suggest_outfit(new_item: dict, wardrobe: dict) -> str:
     """
     # Replace this with your implementation
 
+    item_name = new_item.get("title", "Unknown Item")
+    category = new_item.get("category", "clothing item")
+    color = new_item.get("color", "")
+    description = new_item.get("description", "")
+    prompt = ""
 
-    return ""
+    if len(wardrobe.get("items", [])) == 0:
 
+        prompt = f"""
+            You are a personal stylist.
+
+            The user is considering buying:
+
+            Item: {item_name}
+            Category: {category}
+            Color: {color}
+            Description: {description}
+
+            The user has not provided any wardrobe items.
+
+            Suggest 1-2 ways to style this piece.
+            Include:
+            - What types of clothing pair well with it
+            - Shoes and accessories that match
+            - The overall vibe or aesthetic
+
+            Keep the response concise and practical.
+        """
+
+    else: 
+        wardrobe_text = "\n".join(
+            f"- {item.get('name', item.get('title', 'Unknown Item'))}"
+            for item in wardrobe["items"]
+        )
+
+        prompt = f"""
+            You are a personal stylist.
+
+            The user is considering buying:
+
+            Item: {item_name}
+            Category: {category}
+            Color: {color}
+            Description: {description}
+
+            Current wardrobe:
+            {wardrobe_text}
+
+            Create 1-2 complete outfits using the new item and specific pieces
+            from the wardrobe above.
+
+            Requirements:
+            - Mention wardrobe items by name.
+            """
+
+    groq = _get_groq_client()
+    response = groq.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[
+            {
+                "role": "user",
+                "content": prompt
+            }
+         ],
+        temperature=0.9,
+     )
+
+    return response.choices[0].message.content.strip()
 
 # ── Tool 3: create_fit_card ───────────────────────────────────────────────────
 
