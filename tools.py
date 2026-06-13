@@ -60,7 +60,6 @@ def search_listings(
         id, title, description, category, style_tags (list), size,
         condition, price (float), colors (list), brand, platform
 
-    TODO:
         1. Load all listings with load_listings().
         2. Filter by max_price and size (if provided).
         3. Score each remaining listing by keyword overlap with `description`.
@@ -69,8 +68,39 @@ def search_listings(
 
     Before writing code, fill in the Tool 1 section of planning.md.
     """
-    # Replace this with your implementation
-    return []
+
+    query_words = set(description.lower().split())
+    # 1 Replace this with your implementation
+    listings = load_listings()
+    scored_results = []
+    # 2 filter by price + size
+    for listing in listings:
+        if max_price is not None and listing["price"] > max_price:
+            continue
+        if size is not None and size.lower() not in listing["size"].lower():
+            continue
+        
+        # Each listing dict has the following fields:
+        # id, title, description, category, style_tags (list), size,
+        # condition, price (float), colors (list), brand, platform
+
+        searchable_text = " ".join([
+            listing.get("title", "") or "",
+            listing.get("description", "") or "",
+            listing.get("category", "") or "",
+            listing.get("brand", "") or "",
+            " ".join(listing.get("style_tags", [])),
+            " ".join(listing.get("colors", [])),
+        ]).lower()
+
+        score = len(query_words & set(searchable_text.split()))
+        
+        if score > 0:
+            scored_results.append((score, listing))
+    
+    scored_results.sort(key=lambda x: x[0], reverse=True)
+
+    return [listing for score, listing in scored_results]
 
 
 # ── Tool 2: suggest_outfit ────────────────────────────────────────────────────
@@ -101,6 +131,8 @@ def suggest_outfit(new_item: dict, wardrobe: dict) -> str:
     Before writing code, fill in the Tool 2 section of planning.md.
     """
     # Replace this with your implementation
+
+
     return ""
 
 
