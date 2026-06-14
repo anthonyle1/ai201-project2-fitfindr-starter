@@ -156,21 +156,30 @@ def run_agent(query: str, wardrobe: dict) -> dict:
         #         return the session early. Do NOT proceed to suggest_outfit
         #         with empty input.
 
+    listings = search_listings(session["parsed"]["description"], session["parsed"]["size"], session["parsed"]["max_price"])
+    session["search_results"] = listings
+    if len(listings) == 0:
+        session["error"] = "No listings found, try a different query."
+        return session
     
-
         # Step 4: Select the item to use (e.g., the top result).
         #         Store it in session["selected_item"].
-
+    session["selected_item"] = listings[0]
         # Step 5: Call suggest_outfit() with the selected item and wardrobe.
         #         Store the result in session["outfit_suggestion"].
-
+    session["outfit_suggestion"] = suggest_outfit(session["selected_item"], session["wardrobe"])
         # Step 6: Call create_fit_card() with the outfit suggestion and selected item.
         #         Store the result in session["fit_card"].
 
+    if not session["outfit_suggestion"]:
+        session["error"] = "Unable to generate outfit suggestion."
+        return session
+    
+    session["fit_card"] = create_fit_card(session["outfit_suggestion"], session["selected_item"])
+    if session["fit_card"] == "Outfit is empty or not provided.":
+        session["error"] = "Outfit is empty or not provided."
         # Step 7: Return the session.
 
-
-    session["error"] = "Planning loop not yet implemented."
     return session
 
 

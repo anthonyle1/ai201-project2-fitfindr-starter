@@ -232,7 +232,7 @@ def create_fit_card(outfit: str, new_item: dict) -> str:
     # Replace this with your implementation
 
     if not outfit or not outfit.strip():
-        return ""
+        return "Outfit is empty or not provided."
 
     item_name = new_item.get("title", "Unknown Item")
     category = new_item.get("category", "clothing item")

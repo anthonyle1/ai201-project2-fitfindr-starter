@@ -44,6 +44,11 @@ def handle_query(user_query: str, wardrobe_choice: str) -> tuple[str, str, str]:
            session["fit_card"].
     """
     # TODO: implement this function
+#1. 
+    if len(user_query.strip()) == 0:
+        return "ERROR: User query is empty"
+
+    
     return "Agent not yet implemented.", "", ""
 
 
