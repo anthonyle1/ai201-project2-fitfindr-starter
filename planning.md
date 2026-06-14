@@ -78,7 +78,8 @@ If the outfit is empty or missing, return a descriptive error message string. Th
 **How does your agent decide which tool to call next?**
 The session is generated through the `_new_session()` function. Then after parsing the user query, extracting description, size, and max_price, call search_listings(). If there is results in `session["search_results"]`, then select the top item to move into calling `suggest_outfit()` then returning the output of `create_fit_card()` with the outfit suggestion. 
 
-The agent always follows the order of creating a new session, searching listings, suggesting outfits, then creating fit cards chronologically. 
+The agent always follows the order of creating a new session, searching listings, suggesting outfits, then creating fit cards chronologically. When an error is raised, the session will end abruptly.  
+
 ---
 
 ## State Management
@@ -94,9 +95,9 @@ For each tool, describe the specific failure mode you're handling and what the a
 
 | Tool | Failure mode | Agent response |
 |------|-------------|----------------|
-| search_listings | No results match the query | Raise an error and stop the session early with the generated error message. |
+| search_listings | No results match the query | Raise an error by storing an error message in `session["error"]` and stop the session early with the generated error message. |
 | suggest_outfit | Wardrobe is empty | Generate a prompt with general styling advice for the considered item. |
-| create_fit_card | Outfit input is missing or incomplete | Return a descriptive error message. |
+| create_fit_card | Outfit input is missing or incomplete | Return a descriptive error message, stored in `session["error"]` |
 
 ---
 
@@ -133,6 +134,7 @@ I am going to give ChatGPT my search_listings spec and ask it to help implement 
 
 **Milestone 4 — Planning loop and state management:**
 I am going to give ChatGPT my related notes in `planning.md` to help improve this section. Additionally, I am giving the AI this loop and the steps written in `agent.py` to help generate code. For example, I plan on asking ChatGPT to help write the parsing to build the related regex expressions to help filter the keywords from the query into the description, then to the . I will use the sample example queries in `app.py` to help test. I will also use additional test cases to test edge cases for this function. 
+
 ---
 
 ## A Complete Interaction (Step by Step)
