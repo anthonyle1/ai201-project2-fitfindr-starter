@@ -246,6 +246,7 @@ I changed the prompt for suggest_outfit() to be more explicitly clear that the u
 - *What I gave the AI:* I asked ChatGPT to write a function to parse my query using regex into the description, optional size, and optional price functions.
 - *What it produced:* parse_query() function that utilizes regex expressions to split the query into a list of keyword strings for the description, and size and price variables. If no size or price exists, the respective variable is set to None.
 - *What I changed or overrode:* I followed up by giving ChatGPT the data/listings.json file to ensure I'm not missing any indicators for size and price variables, such as oversized added alongside XS/S/M/L/XL sizes. This meant I edited the regex to better fit the provided data.
+
 **Instance 2**
 
 - *What I gave the AI:* I asked ChatGPT to develop the scoring and soritng operations for search_listings(), ensuring the highest matching is listing[0] to send to suggest_outfit().
