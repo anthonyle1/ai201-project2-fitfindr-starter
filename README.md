@@ -1,6 +1,7 @@
 # FitFindr — Starter Kit
 
 This starter kit contains everything you need to begin Project 2.
+https://www.youtube.com/watch?v=UpYckxt2iLo
 
 ## What's Included
 
