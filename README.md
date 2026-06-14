@@ -100,6 +100,7 @@ A non-empty string with outfit suggestions. If empty, offers general styling adv
 
 **What happens if it fails or returns nothing:**
 If empty, the system should prompt to share general styling advice for the item instead of raising an exception or empty string. 
+
 ---
 
 ### Tool 3: create_fit_card
