@@ -152,6 +152,32 @@ For each tool, describe the specific failure mode you're handling and what the a
 | suggest_outfit | Wardrobe is empty | Generate a prompt with general styling advice for the considered item. |
 | create_fit_card | Outfit input is missing or incomplete | Return a descriptive error message, stored in `session["error"]` |
 
+```
+(.venv) PS C:\Users\anthony\Documents\ai201\ai201-project2-fitfindr-starter> python -c "from tools import search_listings; print(search_listings('designer ballgown', size='XXS', max_price=5))"
+[]
+```
+```
+(.venv) PS C:\Users\anthony\Documents\ai201\ai201-project2-fitfindr-starter> python -c "
+>> from tools import search_listings, suggest_outfit
+>> from utils.data_loader import get_example_wardrobe, get_empty_wardrobe
+>> results = search_listings('vintage graphic tee', size=None, max_price=50)
+>> print(suggest_outfit(results[0], get_empty_wardrobe()))
+>> "
+Considering you don't have any existing wardrobe items to pair with the Y2K Baby Tee, let's start from scratch. Here are two styling suggestions:
+
+1. **Casual Chic**: Pair the baby tee with high-waisted jeans or a flowy skirt, and add some chunky sneakers or sandals for a relaxed, everyday look. Add a trendy tote bag and layered necklaces for a cute, laid-back vibe.
+2. **Retro Revival**: Create a nostalgic outfit by combining the tee with low-rise pants or a mini skirt, and slip-on sneakers or platform sandals. Accessorize with a choker necklace, a scrunchie, or a bucket hat to complete the early 2000s-inspired aesthetic.
+
+Both styles will work well with the butterfly print tee, and you can always mix and match pieces to create your own unique look. Since you're starting from scratch, feel free to experiment and add your own personal touches!
+```
+```
+(.venv) PS C:\Users\anthony\Documents\ai201\ai201-project2-fitfindr-starter> python -c "
+>> from tools import search_listings, create_fit_card
+>> results = search_listings('vintage graphic tee', size=None, max_price=50)
+>> print(create_fit_card('', results[0]))
+>> "
+Outfit is empty or not provided.
+```
 ---
 
 ## Architecture
@@ -190,3 +216,38 @@ I am going to give ChatGPT my related notes in `planning.md` to help improve thi
 
 ---
 
+## Spec Reflection
+
+<!-- Reflect on how planning.md shaped your implementation.
+     Answer both questions with at least 2–3 sentences each. -->
+
+**One way the spec helped you during implementation:**
+The spec helped with developing unit tests and overall how to use pytest. I've worked with unit testing before, but never with Python, so it was a useful reminder and the provided test cases helped make sure my tools.py functions worked. I also asked ChatGPT to develop additional unit tests to ensure error cases work.
+
+**One way your implementation diverged from the spec, and why:**
+I changed the prompt for suggest_outfit() to be more explicitly clear that the user did not provide any outfits to pair with styling. I did this to make demoing the project more specific and easier to recognize that the test case of not providing a wardrobe then providing a general styling guide works.  
+
+
+---
+
+## AI Usage
+
+<!-- Describe at least 2 specific instances where you used an AI tool during this project.
+     For each: what did you give the AI as input, what did it produce, and what did you
+     change, override, or direct differently?
+
+     "I used Claude to help me code" is not sufficient.
+     "I gave Claude my Chunking Strategy section from planning.md and asked it to implement
+     chunk_text(). It returned a function using a fixed character split. I overrode the
+     chunk size from 500 to 200 because my documents are short reviews, not long guides." -->
+
+**Instance 1**
+
+- *What I gave the AI:* I asked ChatGPT to write a function to parse my query using regex into the description, optional size, and optional price functions.
+- *What it produced:* parse_query() function that utilizes regex expressions to split the query into a list of keyword strings for the description, and size and price variables. If no size or price exists, the respective variable is set to None.
+- *What I changed or overrode:* I followed up by giving ChatGPT the data/listings.json file to ensure I'm not missing any indicators for size and price variables, such as oversized added alongside XS/S/M/L/XL sizes. This meant I edited the regex to better fit the provided data.
+**Instance 2**
+
+- *What I gave the AI:* I asked ChatGPT to develop the scoring and soritng operations for search_listings(), ensuring the highest matching is listing[0] to send to suggest_outfit().
+- *What it produced:* The function was updated to generate a string with the description, price, and size for each listing and was compared against the query, utilizing a set intersection to score.
+- *What I changed or overrode:* I added other parts of the listing, such as the title, category, brand, style_tags, and color to make the search more reliable. I did this to ensure no other relevant keywords are missing from the user's query, making the searching more comprehensive. 
