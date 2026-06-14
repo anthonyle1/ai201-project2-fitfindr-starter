@@ -79,10 +79,12 @@ You must have at least 3 tools. The three required tools are listed — add any 
 
 
 **What it returns:**
-Returns a list of matching listing dicts, sorted by relevance
+Returns a list of matching listing dicts, sorted by relevance. The list items include the parameters from the listing.json file, such as id, title, description, category, style_tags, size, condition, price, colors, brand, and platform.
+
 **What happens if it fails or returns nothing:**
 <!-- What should the agent do if no listings match? -->
 If the function fails or returns nothing, return `_new_session()` interaction early.
+
 ---
 
 ### Tool 2: suggest_outfit
